@@ -31,8 +31,7 @@ int main()
 
             auto objects = d.GetObjects();
             assertm(objects.size() > 0, "Somehow the object didn't save?");
-            std::cout << "objects[0]->first = " << objects[0].first << " objects[0].second = " << objects[0].second << " objects[0].test_string = " << objects[0].test_string
-                      << std::endl;
+            std::cout << "objects[0]: " << objects[0] << std::endl;
             auto obj = objects[0];
             obj.second = 1;
             d.EditObject(2, obj);
@@ -40,8 +39,7 @@ int main()
             assertm(objects[1].second == 1, "The database didn't update correctly");
             for (int i = 0; i < objects.size(); i++)
             {
-                std::cout << "objects[" << i << "]->first = " << objects[i].first << " objects[" << i << "].second = " << objects[i].second << " objects[" << i
-                          << "].test_string = " << objects[i].test_string << std::endl;
+                std::cout << "objects[" << i << "]:" << objects[i] << std::endl;
             }
             obj = d.GetObject(2);
             assertm(obj.second == 1, "GetObject(1) seems borked");

@@ -7,5 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 include_directories(includes)
+add_subdirectory(third_party)
+add_subdirectory(benchmarking)
 add_subdirectory(console)
 
