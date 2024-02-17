@@ -29,9 +29,20 @@ int main()
 
             auto objects = d.GetObjects();
             assertm(objects.size() == 1, "Somehow the object didn't save?");
-            std::cout << "objects[0]->first = " << objects[0].first <<
-                " objects[0].second = " << objects[0].second <<
-                " objects[0].test_string = " << objects[0].test_string << std::endl;
+            std::cout << "objects[0]->first = " << objects[0].first << " objects[0].second = " << objects[0].second << " objects[0].test_string = " << objects[0].test_string
+                      << std::endl;
+            auto obj = objects[0];
+            obj.second = 1;
+            d.EditObject(1, obj);
+            objects = d.GetObjects();
+            assertm(objects[0].second == 1, "The database didn't update correctly");
+            std::cout << "objects[0]->first = " << objects[0].first << " objects[0].second = " << objects[0].second << " objects[0].test_string = " << objects[0].test_string
+                      << std::endl;
+            obj = d.GetObject(1);
+            assertm(objects[0].second == 1, "The database didn't update correctly");
+            std::cout << "objects[0]->first = " << objects[0].first << " objects[0].second = " << objects[0].second << " objects[0].test_string = " << objects[0].test_string
+                      << std::endl;
+            d.DeleteObject(1);
         }
     }
     catch (std::exception &e)

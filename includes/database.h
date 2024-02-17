@@ -48,11 +48,24 @@ class database
 
         return Id_;
     }
+    T GetObject(std::uint64_t id)
+    {
+        const auto pos = findDatabasePositionFromId(id);
+        std::ifstream tempReader(FileName_, std::ios::binary);
+        auto *tempMemoryBuffer = new char[sizeof(T)];
+        tempReader.seekg(static_cast<long long>((pos * (sizeof(T) + sizeof(std::uint64_t))) + sizeof(std::uint64_t)));
+        tempReader.read(&tempMemoryBuffer[0], sizeof(T));
+        const auto tempObject = *(reinterpret_cast<T *>(&tempMemoryBuffer[0]));
+        delete [] tempMemoryBuffer;
+        tempReader.close();
+
+        return tempObject;
+    }
     void EditObject(std::uint64_t id, const T &object)
     {
         const auto pos = findDatabasePositionFromId(id);
 
-        DatabaseFile_->seekp(static_cast<long long>(pos * (sizeof(T) + sizeof(std::uint64_t))));
+        DatabaseFile_->seekp(static_cast<long long>((pos * (sizeof(T) + sizeof(std::uint64_t))) + sizeof(std::uint64_t)));
         DatabaseFile_->write(reinterpret_cast<const char *>(&object), sizeof(T));
         DatabaseFile_->flush();
     }
@@ -67,7 +80,6 @@ class database
         FragmentedSegments_.insert(pos);
         DatabaseFile_->flush();
     }
-
     void ReloadFromFile()
     {
         LargestNumber_ = -1;
@@ -86,8 +98,7 @@ class database
 
         for (std::size_t i = 0; i < fileSize / (sizeof(T) + sizeof(std::uint64_t)); i++)
         {
-            std::uint64_t *tempId =
-                reinterpret_cast<std::uint64_t *>(&tempMemoryBuffer[i * (sizeof(T) + sizeof(std::uint64_t))]);
+            std::uint64_t *tempId = reinterpret_cast<std::uint64_t *>(&tempMemoryBuffer[i * (sizeof(T) + sizeof(std::uint64_t))]);
             if (*tempId == 0)
             {
                 FragmentedSegments_.insert(i);
