@@ -21,6 +21,8 @@ int main()
 
             auto id = d->AddObject(t);
             assertm(id == 1, "This has to be id 1");
+            t.first = 6;
+            id = d->AddObject(t);
             delete d;
         }
         sleep(1);
@@ -28,21 +30,23 @@ int main()
             database<test> d("test");
 
             auto objects = d.GetObjects();
-            assertm(objects.size() == 1, "Somehow the object didn't save?");
+            assertm(objects.size() > 0, "Somehow the object didn't save?");
             std::cout << "objects[0]->first = " << objects[0].first << " objects[0].second = " << objects[0].second << " objects[0].test_string = " << objects[0].test_string
                       << std::endl;
             auto obj = objects[0];
             obj.second = 1;
-            d.EditObject(1, obj);
+            d.EditObject(2, obj);
             objects = d.GetObjects();
-            assertm(objects[0].second == 1, "The database didn't update correctly");
-            std::cout << "objects[0]->first = " << objects[0].first << " objects[0].second = " << objects[0].second << " objects[0].test_string = " << objects[0].test_string
-                      << std::endl;
-            obj = d.GetObject(1);
-            assertm(objects[0].second == 1, "The database didn't update correctly");
-            std::cout << "objects[0]->first = " << objects[0].first << " objects[0].second = " << objects[0].second << " objects[0].test_string = " << objects[0].test_string
-                      << std::endl;
+            assertm(objects[1].second == 1, "The database didn't update correctly");
+            for (int i = 0; i < objects.size(); i++)
+            {
+                std::cout << "objects[" << i << "]->first = " << objects[i].first << " objects[" << i << "].second = " << objects[i].second << " objects[" << i
+                          << "].test_string = " << objects[i].test_string << std::endl;
+            }
+            obj = d.GetObject(2);
+            assertm(obj.second == 1, "GetObject(1) seems borked");
             d.DeleteObject(1);
+            d.DeleteObject(2);
         }
     }
     catch (std::exception &e)
