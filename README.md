@@ -6,6 +6,31 @@ It saves full structures to hard drive and definitely doesn't support strings wi
 
 You probably don't ever want to use this in production code, but I'm not your father...
 
+## Usage 
+Simply copy the includes/database.h file into your project.
+
+I also highly suggest you use a binary packed struct.
+
+You can have a look at the includes/test_struct.h file to see how the struct should look.
+
+You can also have a look at either the unit tests or in console/main.cpp to see examples.
+
+## Complex strucutres
+Any structure that contains a pointer will not work.
+
+Strings will not work.
+
+## Building
+The default build for this project includes a benchmarking tool as well as unit tests.
+
+To build in debug mode, just run build.sh.
+
+To build in release mode, just run "build.sh r"
+
+To disable unit testing, run cmake with -DTEST=OFF.
+
+To disable benchmarking, run cmake with -DBENCHMARK=OFF
+
 ## Performance
 It will vary wildly! Depending on strucure size, hard drive speed and probably a few other things as well.
 
