@@ -1,13 +1,17 @@
 # File Database
 
 This is just a simple header file database class.
+
 It saves full structures to hard drive and definitely doesn't support strings with dynamic lengths.
+
 You probably don't ever want to use this in production code, but I'm not your father...
 
 ## Performance
 It will vary wildly! Depending on strucure size, hard drive speed and probably a few other things as well.
 
 On my machine I got the following:
+
+```
 ./database_benchmark 
 2024-02-17T20:10:59+02:00
 Running ./database_benchmark
@@ -31,5 +35,6 @@ database_benchmark_insert/700     1012211 ns      1024147 ns          682
 database_benchmark_insert/800     1145529 ns      1158317 ns          606
 database_benchmark_insert/900     1340647 ns      1313071 ns          533
 database_benchmark_insert/1000    1458216 ns      1459752 ns          482
+```
 
 so basically just over 1.4ms per insert.

@@ -56,7 +56,7 @@ class database
         tempReader.seekg(static_cast<long long>((pos * (sizeof(T) + sizeof(std::uint64_t))) + sizeof(std::uint64_t)));
         tempReader.read(&tempMemoryBuffer[0], sizeof(T));
         const auto tempObject = *(reinterpret_cast<T *>(&tempMemoryBuffer[0]));
-        delete [] tempMemoryBuffer;
+        delete[] tempMemoryBuffer;
         tempReader.close();
 
         return tempObject;
