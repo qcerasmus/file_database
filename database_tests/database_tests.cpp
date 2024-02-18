@@ -37,7 +37,8 @@ TEST(DatabaseTests, EditTest)
     const auto o = db.GetObject(idTest);
     EXPECT_EQ(t.first, o.first);
     EXPECT_EQ(t.second, o.second);
-    EXPECT_EQ(std::string(t.test_string), std::string(o.test_string));
+    for (int i = 0; i < 9; i++)
+        EXPECT_EQ('g' + i, o.test_string[i]);
 
     db.DeleteObject(idTest);
     EXPECT_EQ(0, db.GetObjects().size());
@@ -67,7 +68,8 @@ TEST(DatabaseTests, ReloadTest)
     t = db.GetObject(newId);
     EXPECT_EQ(20, t.first);
     EXPECT_EQ(19, t.second);
-    EXPECT_STREQ("ghijklmno", t.test_string);
+    for (int i = 0; i < 9; i++)
+        EXPECT_EQ('g' + i, t.test_string[i]);
 
     db.DeleteObject(1);
     db.DeleteObject(2);
