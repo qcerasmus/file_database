@@ -12,6 +12,10 @@ template <typename T>
 class database
 {
   public:
+    /* Constructor taking in a name to save the database as.
+     * If the file exists already, an attempt will be made to reload from the file.
+     */
+    
     explicit database(const std::string &name)
     {
         std::filesystem::create_directory("Databases");
@@ -31,11 +35,15 @@ class database
     database &operator=(const database &&) = delete;
     database &operator==(const database &&) = delete;
 
+    /* The destructor will close the database file.
+     */
     ~database()
     {
         DatabaseFile_->close();
     }
 
+    /* Adds an object to the database, returns the id of the new object in the database.
+     */
     [[nodiscard]] std::uint64_t AddObject(const T &object)
     {
         const auto pos = getUnoccupiedPosition();
@@ -48,6 +56,9 @@ class database
 
         return Id_;
     }
+    /* Returns an object at the id specified.
+     * A runtime error will be thrown if the id could not be found.
+     */
     T GetObject(std::uint64_t id)
     {
         const auto pos = findDatabasePositionFromId(id);
@@ -61,6 +72,9 @@ class database
 
         return tempObject;
     }
+    /* Changes the item to the one sent if at the id specified.
+     * A runtime error will be thrown if the id could not be found.
+     */
     void EditObject(std::uint64_t id, const T &object)
     {
         const auto pos = findDatabasePositionFromId(id);
@@ -69,6 +83,9 @@ class database
         DatabaseFile_->write(reinterpret_cast<const char *>(&object), sizeof(T));
         DatabaseFile_->flush();
     }
+    /* Deletes the object at the id specified.
+     * A runtime error will be thrown if the id could not be found.
+     */
     void DeleteObject(std::uint64_t id)
     {
         const auto pos = findDatabasePositionFromId(id);
@@ -80,6 +97,9 @@ class database
         FragmentedSegments_.insert(pos);
         DatabaseFile_->flush();
     }
+    /* Attempts to reload the database state from file.
+     * A runtime error will be thrown if the file size is not a multiple of the struct size.
+     */
     void ReloadFromFile()
     {
         LargestNumber_ = -1;
@@ -88,9 +108,7 @@ class database
         std::ifstream tempReader(FileName_, std::ios::binary);
         const std::uintmax_t fileSize = std::filesystem::file_size(FileName_);
         if (fileSize % (sizeof(T) + sizeof(std::uint64_t)) != 0)
-        {
-            return;
-        }
+            throw std::runtime_error("The file size is not what was expected. The structure might have changed.");
 
         auto *tempMemoryBuffer = new char[fileSize];
         tempReader.read(&tempMemoryBuffer[0], static_cast<long long>(fileSize));
@@ -114,6 +132,8 @@ class database
 
         DatabaseFile_ = std::make_shared<std::ofstream>(FileName_, std::ios::binary | std::ios::in);
     }
+    /* Returns all of the objects from the file. This can be very expensive.
+     */
     [[nodiscard]] std::vector<T> GetObjects() const
     {
         std::vector<T> objects;
@@ -146,6 +166,9 @@ class database
     std::shared_ptr<std::ofstream> DatabaseFile_;
     std::size_t ObjectSize_;
 
+    /* Gets a position where the next object should be inserted.
+     * It will choose a fragmented section first if there is one.
+     */
     [[nodiscard]] std::size_t getUnoccupiedPosition()
     {
         if (FragmentedSegments_.empty())
@@ -156,6 +179,9 @@ class database
 
         return result;
     }
+    /* Returns the database position from the database id.
+     * A runtime error will be thrown if the id could not be found.
+     */
     [[nodiscard]] std::size_t findDatabasePositionFromId(std::uint64_t id)
     {
         if (OccupiedPlaces_.contains(id))
