@@ -41,13 +41,11 @@ class updater
     /**
      * This will take the old database, update spec in json format and the new database filename.
      * It will then attempt to upgrade the database using the spec specified.
+     * exceptions - old database file doesn't exist
+     * 
+     * json file doesn't exist
      *
-     * \param filename - The database filename that should be updated.
-     * \param update_filename - The json file that adheres to the update_struct above.
-     * \param new_filename - instead of overwriting the old database, this new filename will be used as the target name.
-     * \exceptions - old database file doesn't exist
-     *               json file doesn't exist
-     *               the update spec in json is wrong as the old structure isn't the expected length.
+     * the update spec in json is wrong as the old structure isn't the expected length.
      */
     void update(const std::string &filename, const std::string &update_filename, const std::string &new_filename)
     {
@@ -115,7 +113,7 @@ class updater
     }
     /**
      * writes the new database file to disk.
-     * \exceptions - the new file is not the expected size
+     * exceptions - the new file is not the expected size
      */
     void write_new_file(const std::string &filename, const std::string &new_filename)
     {

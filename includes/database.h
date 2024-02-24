@@ -46,7 +46,7 @@ class database
         DatabaseFile_->close();
     }
 
-    /* Adds an object to the database, returns the id of the new object in the database.
+    /** Adds an object to the database, returns the id of the new object in the database.
      */
     [[nodiscard]] std::uint64_t AddObject(const T &object)
     {
