@@ -10,6 +10,10 @@
 
 #include "json.hpp"
 
+/**
+ * This is the structure for the json parser.
+ * You might want to use something else here.
+ */
 struct update_struct
 {
     int length;
@@ -17,6 +21,9 @@ struct update_struct
     std::string fieldStatus;
 };
 
+/**
+ * Converts from json string to the struct above.
+ */
 inline void from_json(const nlohmann::json &j, update_struct &update)
 {
     j.at("length").get_to(update.length);
@@ -24,14 +31,24 @@ inline void from_json(const nlohmann::json &j, update_struct &update)
     j.at("fieldStatus").get_to(update.fieldStatus);
 }
 
+/**
+ * This is a way to update the binary file if the struct has changed.
+ */
 template <typename T>
 class updater
 {
   public:
-    updater()
-    {
-    }
-
+    /**
+     * This will take the old database, update spec in json format and the new database filename.
+     * It will then attempt to upgrade the database using the spec specified.
+     *
+     * \param filename - The database filename that should be updated.
+     * \param update_filename - The json file that adheres to the update_struct above.
+     * \param new_filename - instead of overwriting the old database, this new filename will be used as the target name.
+     * \exceptions - old database file doesn't exist
+     *               json file doesn't exist
+     *               the update spec in json is wrong as the old structure isn't the expected length.
+     */
     void update(const std::string &filename, const std::string &update_filename, const std::string &new_filename)
     {
         if (!std::filesystem::exists(filename))
@@ -59,6 +76,9 @@ class updater
 
         write_new_file(filename, new_filename);
     }
+    /**
+     * This will calculate the old and new structure sizes from the update file provided in the constructor.
+     */
     void calculate_struct_sizes()
     {
         for (auto &update : m_Updates)
@@ -93,6 +113,10 @@ class updater
         m_OldStructSize += sizeof(std::uint64_t);
         m_NewStructSize += sizeof(std::uint64_t);
     }
+    /**
+     * writes the new database file to disk.
+     * \exceptions - the new file is not the expected size
+     */
     void write_new_file(const std::string &filename, const std::string &new_filename)
     {
         char *buffer = new char[m_OldStructSize];

@@ -8,6 +8,10 @@
 #include <set>
 #include <vector>
 
+/**
+ * Single header only file to enable a limited file database.
+ * This is mostly for just saving structures to a flat file in binary format.
+ */
 template <typename T>
 class database
 {
@@ -15,7 +19,7 @@ class database
     /* Constructor taking in a name to save the database as.
      * If the file exists already, an attempt will be made to reload from the file.
      */
-    
+
     explicit database(const std::string &name)
     {
         std::filesystem::create_directory("Databases");
